@@ -1,5 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_countdown_timer/index.dart';
+import 'package:pomodoro/CupertinoButtonPomodoro.dart';
+
+import 'CountdownPomodoro.dart';
 
 class Timer extends StatefulWidget {
   @override
@@ -7,7 +11,15 @@ class Timer extends StatefulWidget {
 }
 
 class _TimerState extends State<Timer> {
-  DateTime timer = DateTime.now();
+  late CountdownController controller;
+  late CupertinoButtonPomodoro button;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = CountdownController(duration: const Duration(minutes: 25), onEnd: onEnd);
+    button = CupertinoButtonPomodoro(controller: controller);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,37 +32,21 @@ class _TimerState extends State<Timer> {
                 style: TextStyle(
                   fontSize: 40,
                 )),
-            SizedBox(
-              height: 300,
-              width: 400,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  border: Border.all(width: 4),
-                  shape: BoxShape.circle,
-                ),
-                child: Center(
-                  child: Text('${timer.minute}:${timer.second}',
-                      style: const TextStyle(
-                        fontSize: 80,
-                      )),
-                ),
-              ),
-            ),
-            CupertinoButton(
-              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 2),
-              borderRadius: const BorderRadius.all(Radius.elliptical(50, 50)),
-              child: const Text("Start Pomodoro",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                  )),
-              onPressed: () {},
-              color: Colors.white,
-            ),
+            CountdownPomodoro(controller: controller),
+            button,
           ],
         ),
       ),
     );
+  }
+
+  void onEnd() {
+    print('onEnd');
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 }
